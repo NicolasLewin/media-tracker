@@ -23,9 +23,12 @@ export default function Games() {
         <Header />
         <Spacing height={100} />
         <div>
-          a
-          <button onClick={fetchGames}>aa</button>
-          {game.map(game => <div>{game.name}</div>)}
+          <button onClick={fetchGames}>Search</button>
+          {game.map(game =>
+             <div className="flex">
+                {game.name}
+              </div>
+          )}
         </div>
     </main>
   );
