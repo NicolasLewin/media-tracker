@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         'Client-ID': '',
         'Authorization': 'Bearer ',
       },
-      body: 'fields name,summary,cover.*; where id = 1942; limit 1;'
+      body: 'fields name,summary,cover.*; search "zelda"; limit 10;'
     });
 
     if (!res.ok) {
@@ -20,24 +20,11 @@ export async function GET(request: Request) {
     }
 
     const data = await res.json();
-    const game = data[0];
 
-    const coverUrl = (() => {
-      if (game.cover?.image_id)
-        return `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`
-      return null
-    })()
 
-    const gameData: Game = {
-      id: game.id,
-      name: game.name,
-      summary: game.summary,
-      coverUrl: coverUrl
-    };
-
-    return NextResponse.json(gameData);
+    return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching game data:', error);
-    return NextResponse.json({ error: 'Error fetching game data' }, { status: 500 });
+      console.error('Error fetching game data:', error);
+      return NextResponse.json({ error: 'Error fetching game data' }, { status: 500 });
   }
 }
