@@ -11,17 +11,17 @@ export type GameCardProps = {
 
 export const GameCard = (props: GameCardProps) => {
     return (
-        <div key={props.id}>
-            <p className="text-lg">{props.title}</p>
-            <div className="flex-grow flex flex-col">
-                <div className="mb-4 flex justify-center">
+        <div key={props.id} className="bg-white flex flex-col h-full rounded-lg shadow-lg hover:bg-slate-100 hover:cursor-pointer">
+            
+            <div className="flex-grow flex flex-col items-center justify-center p-2">
+            
                 <img
                     src={props.cover.replace('t_thumb', 't_cover_big')}
                     alt={`${props.title} cover`}
                     className="rounded-lg shadow-lg max-w-full h-auto"
                     style={{ maxHeight: '300px' }}
                 />
-            </div>
+                <p className="text-lg text-center">{props.title}</p>
             </div>
         </div>
     );
