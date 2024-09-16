@@ -8,23 +8,42 @@ import { useEffect, useState } from "react";
 
 export default function Games() {
 
-    const [games, setGames] = useState<Game[] | null>(null)
+    const [query, setQuery] = useState("");
+    const [games, setGames] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    async function fetchGames() {
+    useEffect(() => {
+      const delayDebounceFn = setTimeout(() => {
+        if (query) {
+          fetchGames(query);
+        } else {
+          setGames([]);
+        }
+      }, 300);
+  
+      return () => clearTimeout(delayDebounceFn);
+    }, [query]);
+
+
+    async function fetchGames(searchQuery) {
+      setIsLoading(true);
+      setError("");
+
       try {
-        const response = await fetch("http://localhost:3000/api/games");
-        const jsonData = (await response.json()) as Game[];
-        console.log(jsonData);
+        const response = await fetch(`http://localhost:3000/api/games?query=${encodeURIComponent(searchQuery)}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch games");
+        }
+        const jsonData = (await response.json());
         setGames(jsonData);
       } catch (e) {
         console.error("Error while fetching:", e);
+        setError("An error occurred while fetching games. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }
-
-
-    useEffect(() => {
-      fetchGames();
-    }, []);
 
     return (
     <main>
@@ -32,16 +51,25 @@ export default function Games() {
         <Spacing height={100} />
         <div>
           <div className="flex items-center justify-center">
-            <input type="search" id="search" className="block p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search" required />
-            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
+            <input type="search" id="search" className="block p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search games" required />
           </div>
           <Spacing height={100} />
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-rows-3 items-center">
-            {games && games.map((game) => (
-                <GameCard id={game.id} title={game.name} cover={game.cover.url} />
-            ))}
-            </div>
-        </div>
+
+
+          {isLoading && <p>Loading...</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
+
+          {games.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-rows-3 items-center">
+              {games && games.map((game) => (
+                  <GameCard id={game.id} title={game.name} cover={game.cover.url} />
+              ))}
+              </div>
+          ) : (
+            query && !isLoading && <p>No games found. Try a different search term.</p>
+          )}
+          </div>
     </main>
   );
 }

@@ -4,6 +4,13 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const url = "https://api.igdb.com/v4/games";
   
+  const { searchParams } = new URL(request.url);
+  const query = searchParams.get('query');
+
+  if (!query) {
+    return NextResponse.json({ message: 'Query parameter is required' }, { status: 400 });
+  }
+  
   try {
     const res = await fetch(url, {
       method: 'POST',
@@ -12,7 +19,7 @@ export async function GET(request: Request) {
         'Client-ID': '',
         'Authorization': 'Bearer ',
       },
-      body: 'fields name,summary,cover.*; search "zelda"; limit 10;'
+      body: `fields name,summary,cover.*; search "${query}"; limit 10;`
     });
 
     if (!res.ok) {
