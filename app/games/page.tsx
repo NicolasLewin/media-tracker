@@ -3,7 +3,6 @@
 import { GameCard } from "@/components/GameCard";
 import { Header } from "@/components/Header";
 import { Spacing } from "@/components/Spacing";
-import { Game } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function Games() {
@@ -63,7 +62,7 @@ export default function Games() {
           {games.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-rows-3 items-center">
               {games && games.map((game) => (
-                  <GameCard id={game.id} title={game.name} cover={game.cover.url} />
+                <GameCard key={game.id} game={game} />
               ))}
               </div>
           ) : (
