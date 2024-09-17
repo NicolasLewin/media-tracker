@@ -25,7 +25,7 @@ export default function Games() {
     }, [query]);
 
 
-    async function fetchGames(searchQuery) {
+    async function fetchGames(searchQuery : string) {
       setIsLoading(true);
       setError("");
 
