@@ -25,7 +25,7 @@ export default function Games() {
     }, [query]);
 
 
-    async function fetchGames(searchQuery : string) {
+    async function fetchGames(searchQuery: string) {
       setIsLoading(true);
       setError("");
 
@@ -36,8 +36,8 @@ export default function Games() {
         }
         const jsonData = (await response.json());
         setGames(jsonData);
-      } catch (e) {
-        console.error("Error while fetching:", e);
+      } catch (err) {
+        console.error("Error while fetching:", err);
         setError("An error occurred while fetching games. Please try again.");
       } finally {
         setIsLoading(false);

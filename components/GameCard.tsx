@@ -1,14 +1,23 @@
 "use client"
 
 import { Game } from "@/types";
+import { useRouter } from "next/navigation";
 
 export type GameCardProps = {
     game: Game;
 }
 
 export const GameCard = (props: GameCardProps) => {
+
+    const router = useRouter();
+
+    const handleClick = () => {
+      router.push(`/games/${props.game.id}`);
+    };
+
+
     return (
-        <div key={props.game.id} className="bg-white flex flex-col h-full rounded-lg shadow-lg hover:bg-slate-100 hover:cursor-pointer">
+        <div key={props.game.id} className="bg-white flex flex-col h-full rounded-lg shadow-lg hover:bg-slate-100 hover:cursor-pointer" onClick={handleClick}>
             <div className="flex-grow flex flex-col items-center justify-center p-2">
             {props.game.cover && props.game.cover.url ? (
                 <img
