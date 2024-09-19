@@ -11,19 +11,17 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("null");
     const router = useRouter();
-    const id = params.gameId;
+    const gameId = params.gameId;
   
     useEffect(() => {
-      if (id) {
-        console.log("aa");
-        fetchGameDetails(id);
+      if (gameId) {
+        fetchGameDetails(gameId);
       }
-    }, [id]);
+    }, [gameId]);
   
     const fetchGameDetails = async (gameId: string) => {
       try {
-        //const response = await fetch(`/api/game/${gameId}`);
-        const response = await fetch(`http://localhost:3000/api/games?query=${gameId}`);
+        const response = await fetch(`http://localhost:3000/api/games?gameId=${gameId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch game details');
         }
@@ -42,7 +40,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
             <Header />
             <Spacing height={100} />
             <div>
-              <p>{id}</p>
+              <p>{gameId}</p>
               {isLoading && <p>Loading...</p>}
               {error && <p className="text-red-500 mb-4">{error}</p>}
             </div>
