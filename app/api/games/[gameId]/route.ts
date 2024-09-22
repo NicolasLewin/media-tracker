@@ -18,7 +18,8 @@ export async function GET(request: Request) {
         'Client-ID': '',
         'Authorization': 'Bearer ',
       },
-      body: `fields name,summary,cover.*; where"${gameId}";`
+      body: `fields name, summary, rating, genres.name, platforms.name, cover.url, release_dates.date;
+             where id = ${gameId};`
     });
 
     if (!res.ok) {
