@@ -88,13 +88,23 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
                               </div>
                             </div>
                           )}
-                          <div className="pt-6">
-                            <button 
-                              onClick={() => router.back()} 
-                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            >
-                              Back to List
-                            </button>
+                          <div className="flex">
+                            <div>
+                              <button 
+                                onClick={() => router.back()} 
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              >
+                                Back to List
+                              </button>
+                            </div>
+                            <div className="pl-6">
+                              <button 
+                                onClick={() => router.back()} 
+                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              >
+                                Add to profile
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
