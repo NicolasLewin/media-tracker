@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
+  password_hash String
+  created_at   DateTime @default(now())
+}
+
+model Games {
+  id           Int      @id @default(autoincrement())
+  title        String
+  release_date DateTime
+  genre        String
+  developer    String
+  api_id       String   @unique
+  created_at   DateTime @default(now())
+}
+
+model Movies {
+  id           Int      @id @default(autoincrement())
+  title        String
+  release_date DateTime
+  genre        String
+  director     String
+  api_id       String   @unique
+  created_at   DateTime @default(now())
+}
+
+model UserGames {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  game_id    Int
+  rating     Int      @check(rating >= 1 && rating <= 5)
+  review     String?
+  created_at DateTime @default(now())
+
+  @@unique([user_id, game_id])
+}
+
+model UserMovies {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  movie_id   Int
+  rating     Int      @check(rating >= 1 && rating <= 5)
+  review     String?
+  created_at DateTime @default(now())
+
+  @@unique([user_id, movie_id])
+}
