@@ -7,50 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  email        String   @unique
+model User {
+  id            Int         @id @default(autoincrement())
+  username      String      @unique
+  email         String      @unique
   password_hash String
-  created_at   DateTime @default(now())
+  created_at    DateTime    @default(now())
+  userGames     UserGame[]
+  userMovies    UserMovie[]
 }
 
-model Games {
-  id           Int      @id @default(autoincrement())
+model Game {
+  id           Int         @id @default(autoincrement())
   title        String
   release_date DateTime
   genre        String
   developer    String
-  api_id       String   @unique
-  created_at   DateTime @default(now())
+  api_id       String      @unique
+  created_at   DateTime    @default(now())
+  userGames    UserGame[]
 }
 
-model Movies {
-  id           Int      @id @default(autoincrement())
+model Movie {
+  id           Int         @id @default(autoincrement())
   title        String
   release_date DateTime
   genre        String
   director     String
-  api_id       String   @unique
-  created_at   DateTime @default(now())
+  api_id       String      @unique
+  created_at   DateTime    @default(now())
+  userMovies   UserMovie[]
 }
 
-model UserGames {
+model UserGame {
   id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id])
   user_id    Int
+  game       Game     @relation(fields: [game_id], references: [id])
   game_id    Int
-  rating     Int      @check(rating >= 1 && rating <= 5)
+  rating     Int
   review     String?
   created_at DateTime @default(now())
 
   @@unique([user_id, game_id])
 }
 
-model UserMovies {
+model UserMovie {
   id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id])
   user_id    Int
+  movie      Movie    @relation(fields: [movie_id], references: [id])
   movie_id   Int
-  rating     Int      @check(rating >= 1 && rating <= 5)
+  rating     Int
   review     String?
   created_at DateTime @default(now())
 
