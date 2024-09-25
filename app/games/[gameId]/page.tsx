@@ -97,7 +97,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
                                 Back to List
                               </button>
                             </div>
-                            <div className="pl-6">
+                            <div className="pl-8">
                               <button 
                                 onClick={() => router.back()} 
                                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
