@@ -17,50 +17,26 @@ model User {
   userMovies    UserMovie[]
 }
 
-model Game {
-  id           Int         @id @default(autoincrement())
-  title        String
-  release_date DateTime
-  genre        String
-  developer    String
-  api_id       String      @unique
-  created_at   DateTime    @default(now())
-  userGames    UserGame[]
-}
-
-model Movie {
-  id           Int         @id @default(autoincrement())
-  title        String
-  release_date DateTime
-  genre        String
-  director     String
-  api_id       String      @unique
-  created_at   DateTime    @default(now())
-  userMovies   UserMovie[]
-}
-
 model UserGame {
   id         Int      @id @default(autoincrement())
   user       User     @relation(fields: [user_id], references: [id])
   user_id    Int
-  game       Game     @relation(fields: [game_id], references: [id])
-  game_id    Int
-  rating     Int
+  game_api_id String
+  rating     Int?
   review     String?
   created_at DateTime @default(now())
 
-  @@unique([user_id, game_id])
+  @@unique([user_id, game_api_id])
 }
 
 model UserMovie {
   id         Int      @id @default(autoincrement())
   user       User     @relation(fields: [user_id], references: [id])
   user_id    Int
-  movie      Movie    @relation(fields: [movie_id], references: [id])
-  movie_id   Int
-  rating     Int
+  movie_api_id String
+  rating     Int?
   review     String?
   created_at DateTime @default(now())
 
-  @@unique([user_id, movie_id])
+  @@unique([user_id, movie_api_id])
 }
