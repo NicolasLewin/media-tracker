@@ -6,10 +6,45 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(isLogin ? 'Login' : 'Register', { username, email, password });
+    setMessage('');
+
+    if (!isLogin && password !== confirmPassword) {
+      setMessage('Passwords do not match');
+      return;
+    }
+
+    if (isLogin) {
+      //TODO : handle login
+      console.log('Login', { email, password });
+    } else {
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setMessage('Registration successful!');
+          setUsername('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+          setIsLogin(true);
+        } else {
+          setMessage(data.message || 'Registration failed');
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        setMessage('An error occurred during registration');
+      }
+    }
   };
 
   const inputClassName = "mt-1 block w-full px-3 py-2 text-lg bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -20,6 +55,11 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
           {isLogin ? 'Login' : 'Register'}
         </h2>
+        {message && (
+          <div className={`mb-4 p-2 rounded ${message.includes('successful') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+            {message}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-6">
           {!isLogin && (
             <div>
@@ -86,7 +126,10 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
         </form>
         <div className="mt-6 text-center">
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setMessage('');
+            }}
             className="text-indigo-600 hover:text-indigo-800 font-medium"
           >
             {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
