@@ -17,33 +17,38 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
       return;
     }
 
-    if (isLogin) {
-      //TODO : handle login
-      console.log('Login', { email, password });
-    } else {
-      try {
-        const response = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password }),
-        });
+    try {
+      const endpoint = isLogin ? '/api/login' : '/api/register';
+      const bodyData = isLogin 
+        ? { email, password }
+        : { username, email, password };
 
-        const data = await response.json();
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      });
 
-        if (response.ok) {
-          setMessage('Registration successful!');
-          setUsername('');
-          setEmail('');
-          setPassword('');
-          setConfirmPassword('');
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(isLogin ? `Hello, ${data.username}!` : 'Registration successful!');
+
+        //TODO: handle token
+        //TODO: handle redirect
+
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        if(!isLogin)
           setIsLogin(true);
-        } else {
-          setMessage(data.message || 'Registration failed');
-        }
-      } catch (error) {
-        console.error('Registration error:', error);
-        setMessage('An error occurred during registration');
+      } else {
+        setMessage(data.message || (isLogin ? 'Login failed' : 'Registration failed'));
       }
+    } catch (error) {
+      console.error(isLogin ? 'Login error:' : 'Registration error:', error);
+      setMessage(`An error occurred during ${isLogin ? 'login' : 'registration'}`);
     }
   };
 
@@ -56,7 +61,7 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
           {isLogin ? 'Login' : 'Register'}
         </h2>
         {message && (
-          <div className={`mb-4 p-2 rounded ${message.includes('successful') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+          <div className={`mb-4 p-2 rounded ${message.includes('successful') || message.includes('Hello') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
             {message}
           </div>
         )}
