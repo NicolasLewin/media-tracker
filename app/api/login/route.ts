@@ -1,6 +1,7 @@
 import prisma from '@/prisma'
 import bcrypt from 'bcryptjs'
 import { NextResponse } from 'next/server'
+import jwt from 'jsonwebtoken'
 
 export async function POST(request: Request) {
   try {
@@ -10,21 +11,30 @@ export async function POST(request: Request) {
       where: { email }
     })
 
-    if (!user) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 })
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    )
 
-    if (!isPasswordValid) {
-      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 })
-    }
-
-    return NextResponse.json({ 
+    const response = NextResponse.json({ 
       message: 'Login successful', 
-      userId: user.id,
-      username: user.username
+      user: { id: user.id, username: user.username, email: user.email }
     }, { status: 200 })
+
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development',
+      sameSite: 'strict',
+      maxAge: 86400,
+      path: '/',
+    })
+
+    return response
 
   } catch (error) {
     console.error('Login error:', error)
