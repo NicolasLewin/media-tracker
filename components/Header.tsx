@@ -1,18 +1,54 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginRegisterModal } from "./LoginRegisterModal";
+import toast from "react-hot-toast";
 
 export const Header = () => {
 
     const [isLoginRegisterModalOpen, setIsLoginRegisterModalOpen] = useState(false);
-
+    const [user, setUser] = useState(null);
 
     const toggleLoginRegisterModal = () => {
         setIsLoginRegisterModalOpen(!isLoginRegisterModalOpen);
         console.log(isLoginRegisterModalOpen);
       };
 
+      useEffect(() => {
+        checkLoginStatus();
+      }, []);
+    
+      const checkLoginStatus = async () => {
+        try {
+          const response = await fetch('/api/verify-token', {
+            method: 'GET',
+            credentials: 'include',
+          });
+          const data = await response.json();
+          if (data.isLoggedIn) {
+            setUser(data.user);
+          }
+        } catch (error) {
+          console.error('Error checking login status:', error);
+        }
+      };
+
+      const handleLogout = async () => {
+        try {
+          const response = await fetch('/api/logout', {
+            method: 'POST',
+            credentials: 'include',
+          });
+          if (response.ok) {
+            setUser(null);
+            return toast.success('Logged out successfully');
+          }
+        } catch (error) {
+          console.error('Logout error:', error);
+          return toast.error('Error during logout');
+        }
+      };
+    
 
     return (  
         <div className="max-w-6xl px-4 m-auto flex flex-col">
@@ -22,7 +58,12 @@ export const Header = () => {
                 <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Media Tracker</span>
             </a>
             <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                <button type="button" onClick={toggleLoginRegisterModal} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+                {!user &&
+                    <button type="button" onClick={toggleLoginRegisterModal} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login</button>
+                }
+                {user &&
+                    <button type="button" onClick={handleLogout} className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Logout</button>
+                }
                 {isLoginRegisterModalOpen && <LoginRegisterModal onClose={toggleLoginRegisterModal} />}
                 <button data-collapse-toggle="navbar-sticky" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
                     <span className="sr-only">Open main menu</span>
