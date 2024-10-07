@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { Spacing } from "@/components/Spacing";
 
 export default function Films() {

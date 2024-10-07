@@ -1,7 +1,6 @@
 "use client"
 
 import { GameCard } from "@/components/GameCard";
-import { Header } from "@/components/Header";
 import { Spacing } from "@/components/Spacing";
 import { useEffect, useState } from "react";
 
