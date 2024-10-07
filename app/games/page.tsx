@@ -46,7 +46,6 @@ export default function Games() {
 
     return (
     <main>
-        <Header />
         <Spacing height={100} />
         <div>
           <div className="flex items-center justify-center">

@@ -5,7 +5,6 @@ import { Spacing } from "@/components/Spacing";
 export default function Home() {
   return (
     <main>
-        <Header />
         <Spacing height={100} />
         <Main />
     </main>
