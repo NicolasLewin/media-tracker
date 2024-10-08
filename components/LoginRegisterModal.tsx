@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -7,6 +8,29 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [user, setUser] = useState(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
+  const checkLoginStatus = async () => {
+    try {
+      const response = await fetch('/api/user/verify-token', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await response.json();
+      if (data.isLoggedIn) {
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error('Error checking login status:', error);
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +42,7 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
     }
 
     try {
-      const endpoint = isLogin ? '/api/login' : '/api/register';
+      const endpoint = isLogin ? '/api/user/login' : '/api/user/register';
       const bodyData = isLogin 
         ? { email, password }
         : { username, email, password };
@@ -27,22 +51,27 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData),
+        credentials: 'include',
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(isLogin ? `Hello, ${data.username}!` : 'Registration successful!');
-
-        //TODO: handle token
-        //TODO: handle redirect
-
         setUsername('');
         setEmail('');
         setPassword('');
         setConfirmPassword('');
-        if(!isLogin)
+        if (isLogin) {
+          setUser(data.user);
+
+          router.refresh();
+
+          setMessage(`Hello, ${data.user.username}!`);
+
+        } else {
+          setMessage('Registration successful! Please log in.');
           setIsLogin(true);
+        }
       } else {
         setMessage(data.message || (isLogin ? 'Login failed' : 'Registration failed'));
       }

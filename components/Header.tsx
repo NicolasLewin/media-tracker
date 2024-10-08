@@ -20,7 +20,7 @@ export const Header = () => {
     
       const checkLoginStatus = async () => {
         try {
-          const response = await fetch('/api/verify-token', {
+          const response = await fetch('/api/user/verify-token', {
             method: 'GET',
             credentials: 'include',
           });
@@ -37,7 +37,7 @@ export const Header = () => {
 
       const handleLogout = async () => {
         try {
-          const response = await fetch('/api/logout', {
+          const response = await fetch('/api/user/logout', {
             method: 'POST',
             credentials: 'include',
           });
