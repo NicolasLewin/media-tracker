@@ -1,4 +1,3 @@
-import { Game } from '@/types';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -10,16 +9,16 @@ export async function GET(request: Request) {
   if (!query) {
     return NextResponse.json({ message: 'Query parameter is required' }, { status: 400 });
   }
-  
+
   try {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Client-ID': '',
-        'Authorization': 'Bearer ',
+        'Client-ID': process.env.CLIEND_ID_GAMES,
+        'Authorization': process.env.AUTHORIZATION_GAMES,
       },
-      body: `fields name,summary,cover.*; search "${query}"; limit 10;`
+      body: `fields name,summary,cover.*; search "${query}"; limit 12;`
     });
 
     if (!res.ok) {

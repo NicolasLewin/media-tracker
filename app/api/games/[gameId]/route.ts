@@ -15,8 +15,8 @@ export async function GET(request: Request) {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Client-ID': '',
-        'Authorization': 'Bearer ',
+        'Client-ID': process.env.CLIEND_ID_GAMES,
+        'Authorization': process.env.AUTHORIZATION_GAMES,
       },
       body: `fields name, summary, rating, genres.name, platforms.name, cover.url, release_dates.date;
              where id = ${gameId};`
