@@ -29,7 +29,7 @@ export default function Games() {
       setError("");
 
       try {
-        const response = await fetch(`http://localhost:3000/api/games?query=${encodeURIComponent(searchQuery)}`);
+        const response = await fetch(`/api/games?query=${encodeURIComponent(searchQuery)}`);
         if (!response.ok) {
           throw new Error("Failed to fetch games");
         }
