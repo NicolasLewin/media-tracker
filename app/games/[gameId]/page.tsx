@@ -3,6 +3,7 @@
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from 'react-hot-toast';
 
 export default function GameDetailsPage({ params }: {params: { gameId: string}}) {
     const [game, setGame] = useState([]);
@@ -19,7 +20,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
   
     const fetchGameDetails = async (gameId: string) => {
       try {
-        const response = await fetch(`http://localhost:3000/api/games/${gameId}?gameId=${gameId}`);
+        const response = await fetch(`/api/games/${gameId}?gameId=${gameId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch game details');
         }
@@ -33,6 +34,46 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
       }
     };
     
+
+    const addToProfile = async () => {
+      try {
+        const response = await fetch('/api/user/add-game', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameId: String(game[0].id),
+          }),
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to add game to profile');
+        }
+
+        toast.success('Game added to your profile!');
+      } catch (error) {
+        console.error('Error adding game to profile:', error);
+        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+          toast.error('Please log in to add games to your profile.');
+        } else if (error.message === 'The game is already in your profile') {
+          toast.success('This game is already in your profile.', {
+            icon: '🔔',
+            style: {
+              background: '#3498db',
+              color: '#fff',
+            },
+          });
+        } else {
+          toast.error(`Failed to add game to your profile: ${error.message}`);
+        }
+      }
+    };
+
+
     return (
         <main>
           <Spacing height={100} />
@@ -96,7 +137,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
                           </div>
                           <div className="pl-8">
                             <button 
-                              onClick={() => router.back()} 
+                              onClick={addToProfile} 
                               className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                               Add to profile
