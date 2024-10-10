@@ -3,15 +3,18 @@
 import { useState } from "react";
 import { LoginRegisterModal } from "./LoginRegisterModal";
 import toast from "react-hot-toast";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export const Header = ({ initialUser }) => {
   const [isLoginRegisterModalOpen, setIsLoginRegisterModalOpen] = useState(false);
   const [user, setUser] = useState(initialUser);
+  const router = useRouter();
 
   const toggleLoginRegisterModal = () => {
       setIsLoginRegisterModalOpen(!isLoginRegisterModalOpen);
   };
-
+  
   const handleLogout = async () => {
     try {
       const response = await fetch('/api/user/logout', {
@@ -20,11 +23,12 @@ export const Header = ({ initialUser }) => {
       });
       if (response.ok) {
           setUser(null);
-          return toast.success('Logged out successfully');
+          toast.success('Logged out successfully');
+          router.push('/');
       }
     } catch (error) {
       console.error('Logout error:', error);
-      return toast.error('Error during logout');
+      toast.error('Error during logout');
     }
   };
 
