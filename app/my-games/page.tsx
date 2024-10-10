@@ -56,7 +56,7 @@ export default function MyGames() {
       {games.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-rows-3 items-center">
           {games.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <GameCard key={game.id} game={game} mygames={true} />
           ))}
         </div>
       ) : (

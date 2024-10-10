@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export type GameCardProps = {
     game: Game;
+    mygames?: boolean;
 }
 
 export const GameCard = (props: GameCardProps) => {
@@ -12,7 +13,13 @@ export const GameCard = (props: GameCardProps) => {
     const router = useRouter();
 
     const handleClick = () => {
-      router.push(`/games/${props.game.id}`);
+        
+        {props.mygames ? (
+            router.push(`/my-games/${props.game.id}`)
+        ) : (
+            router.push(`/games/${props.game.id}`)
+        )}
+       
     };
 
 
