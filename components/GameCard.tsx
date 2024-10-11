@@ -22,7 +22,7 @@ export const GameCard = (props: GameCardProps) => {
        
     };
 
-
+    //TODO: replace with Image from Next
     return (
         <div key={props.game.id} className="bg-white flex flex-col h-full rounded-lg shadow-lg hover:bg-slate-100 hover:cursor-pointer" onClick={handleClick}>
             <div className="flex-grow flex flex-col items-center justify-center p-2">
