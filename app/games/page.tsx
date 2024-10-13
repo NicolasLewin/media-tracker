@@ -5,7 +5,6 @@ import { Spacing } from "@/components/Spacing";
 import { useEffect, useState } from "react";
 
 export default function Games() {
-
     const [query, setQuery] = useState("");
     const [games, setGames] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +21,6 @@ export default function Games() {
   
       return () => clearTimeout(delayDebounceFn);
     }, [query]);
-
 
     async function fetchGames(searchQuery: string) {
       setIsLoading(true);
@@ -44,29 +42,35 @@ export default function Games() {
     }
 
     return (
-    <main>
+      <main>
         <Spacing height={100} />
         <div>
           <div className="flex items-center justify-center">
-            <input type="search" id="search" className="block p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search games" required />
+            <input 
+              type="search" 
+              id="search" 
+              className="block p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" 
+              value={query} 
+              onChange={(e) => setQuery(e.target.value)} 
+              placeholder="Search games" 
+              required 
+            />
           </div>
           <Spacing height={100} />
 
-
           {isLoading && <p>Loading...</p>}
           {error && <p className="text-red-500 mb-4">{error}</p>}
-
 
           {games.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 grid-rows-3 items-center">
               {games && games.map((game) => (
                 <GameCard key={game.id} game={game} />
               ))}
-              </div>
+            </div>
           ) : (
             query && !isLoading && <p>No games found. Try a different search term.</p>
           )}
-          </div>
-    </main>
+        </div>
+      </main>
   );
 }
