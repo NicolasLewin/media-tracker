@@ -38,6 +38,7 @@ export const MovieCard = (props: MovieCardProps) => {
           </div>
         )}
           <p className="text-lg text-center">{props.movie.Title}</p>
+          <p className="text-sm text-center">{props.movie.Year}</p>
       </div>
     </div>    
   );
