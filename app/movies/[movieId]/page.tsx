@@ -3,9 +3,10 @@
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from 'react-hot-toast';
 
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
-  const [movie, setMovie] = useState(null);
+  const [movie, setMovie] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
 
   const fetchMovieDetails = async (movieId: string) => {
     try {
-      const response = await fetch(`/api/movies/${movieId}`);
+      const response = await fetch(`/api/movies/${movieId}?movieId=${movieId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch movie details');
       }
@@ -30,6 +31,44 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
       setError("An error occurred while fetching movie details. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const addToProfile = async () => {
+    try {
+      const response = await fetch('/api/user/add-movie', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          movieId: String(movie.imdbID),
+        }),
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to add movie to profile');
+      }
+
+      toast.success('Movie added to your profile!');
+    } catch (error) {
+      console.error('Error adding movie to profile:', error);
+      if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+        toast.error('Please log in to add movies to your profile.');
+      } else if (error.message === 'The movie is already in your profile') {
+        toast.success('This movie is already in your profile.', {
+          icon: '🔔',
+          style: {
+            background: '#3498db',
+            color: '#fff',
+          },
+        });
+      } else {
+        toast.error(`Failed to add movie to your profile: ${error.message}`);
+      }
     }
   };
 
@@ -91,7 +130,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
                       </div>
                       <div className="pl-8">
                         <button 
-                          onClick={() => console.log('Add to profile functionality not implemented yet')} 
+                          onClick={addToProfile} 
                           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
                           Add to profile
