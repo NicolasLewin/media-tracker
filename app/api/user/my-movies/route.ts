@@ -17,17 +17,17 @@ export async function GET(request: Request) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
     }
 
-    const userGames = await prisma.userMovie.findMany({
+    const userMovies = await prisma.userMovie.findMany({
       where: { user_id: decodedToken.userId },
       select: {
         movie_api_id: true,
       }
     })
 
-    return NextResponse.json({ userGames }, { status: 200 })
+    return NextResponse.json({ userMovies }, { status: 200 })
 
   } catch (error) {
-    console.error('Error fetching user mvoies:', error)
+    console.error('Error fetching user movies:', error)
     return NextResponse.json({ message: 'Error fetching user movies' }, { status: 500 })
   } finally {
     await prisma.$disconnect()
