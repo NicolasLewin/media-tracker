@@ -1,5 +1,7 @@
+import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,7 +10,7 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState(null);
+  const { setUser } = useUser();
 
   const router = useRouter();
 
@@ -67,6 +69,8 @@ export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
           router.refresh();
 
           setMessage(`Hello, ${data.user.username}!`);
+          onClose();
+          toast.success("Successfully logged in!");
 
         } else {
           setMessage('Registration successful! Please log in.');

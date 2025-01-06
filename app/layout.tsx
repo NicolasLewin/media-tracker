@@ -4,6 +4,8 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { headers } from 'next/headers'
 import { Header } from "@/components/Header";
+import { ParticlesProvider } from "./providers/ParticlesProvider";
+import { UserProvider } from "@/contexts/UserContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,10 +42,12 @@ export default async function RootLayout({
   const user = await getUser()
   return (
     <html lang="en">
-      <body className={inter.className, "bg-gray-100"}>
-        <Header initialUser={user} />
-        {children}
-        <Toaster />
+      <body className={inter.className + " bg-gray-100"}>
+        <UserProvider initialUser={user}>
+          <Header />
+            {children}
+          <Toaster />
+        </UserProvider>
       </body>
     </html>
   );

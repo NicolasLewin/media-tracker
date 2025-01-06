@@ -5,10 +5,11 @@ import { LoginRegisterModal } from "./LoginRegisterModal";
 import toast from "react-hot-toast";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUser } from "@/contexts/UserContext";
 
-export const Header = ({ initialUser }) => {
+export const Header = () => {
   const [isLoginRegisterModalOpen, setIsLoginRegisterModalOpen] = useState(false);
-  const [user, setUser] = useState(initialUser);
+  const { user, setUser } = useUser();
   const router = useRouter();
 
   const toggleLoginRegisterModal = () => {
