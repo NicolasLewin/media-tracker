@@ -1,5 +1,6 @@
 "use client"
 
+import ReviewModal from "@/components/ReviewModal";
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -11,11 +12,30 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
     const [error, setError] = useState("null");
     const router = useRouter();
     const gameId = params.gameId;
-  
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [currentReview, setCurrentReview] = useState('');
+
     useEffect(() => {
       if (gameId) {
         fetchGameDetails(gameId);
       }
+
+      const fetchReview = async () => {
+        try {
+          const response = await fetch(`/api/user/review-game?gameId=${gameId}`, {
+            credentials: 'include'
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentReview(data.review);
+          }
+        } catch (error) {
+          console.error('Error fetching review:', error);
+        }
+      };
+      
+      fetchReview();
+
     }, [gameId]);
   
     const fetchGameDetails = async (gameId: string) => {
@@ -34,6 +54,32 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
       }
     };
     
+    const handleReviewSubmit = async (review: string) => {
+      try {
+        const response = await fetch('/api/user/review-game', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            gameId: game[0].id,
+            review,
+          }),
+          credentials: 'include',
+        });
+    
+        if (response.ok) {
+          setCurrentReview(review);
+          toast.success('Review submitted successfully!');
+          setIsReviewModalOpen(false);
+        } else {
+          throw new Error('Failed to submit review');
+        }
+      } catch (error) {
+        console.error('Error submitting review:', error);
+        toast.error('Failed to submit review');
+      }
+    };
 
     const removeFromProfile = async () => {
       try {
@@ -131,6 +177,21 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
                               Remove from profile
                             </button>
                           </div>
+                          <div className="pl-8">
+                            <button 
+                              onClick={() => setIsReviewModalOpen(true)}
+                              className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                              {currentReview ? 'Edit Review' : 'Write Review'}
+                            </button>
+                          </div>
+                          <ReviewModal
+                            isOpen={isReviewModalOpen}
+                            onClose={() => setIsReviewModalOpen(false)}
+                            onSubmit={handleReviewSubmit}
+                            initialReview={currentReview}
+                            title={game[0].name}
+                          />
                         </div>
                       </div>
                     </div>
@@ -142,6 +203,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
           ) : (
             <p>No game found.</p>
           )}
+
         </main>
     );
   }
