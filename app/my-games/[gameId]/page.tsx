@@ -1,15 +1,29 @@
 "use client"
 
-import ReviewModal from "@/components/ReviewModal";
+import { Game } from "@/types";
+import { ReviewModal } from "@/components/ReviewModal";
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast';
 
+interface DetailedGame extends Game {
+  summary?: string;
+  rating?: number;
+  genres?: Array<{
+    id: number;
+    name: string;
+  }>;
+  platforms?: Array<{
+    id: number;
+    name: string;
+  }>;
+}
+
 export default function GameDetailsPage({ params }: {params: { gameId: string}}) {
-    const [game, setGame] = useState([]);
+    const [game, setGame] = useState<DetailedGame[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState("null");
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const gameId = params.gameId;
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);

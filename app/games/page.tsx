@@ -1,14 +1,15 @@
 "use client"
 
+import { Game } from "@/types";
 import { GameCard } from "@/components/GameCard";
 import { Spacing } from "@/components/Spacing";
 import { useEffect, useState } from "react";
 
 export default function Games() {
     const [query, setQuery] = useState("");
-    const [games, setGames] = useState([]);
+    const [games, setGames] = useState<Game[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string>("");
 
     useEffect(() => {
       const delayDebounceFn = setTimeout(() => {
@@ -31,7 +32,7 @@ export default function Games() {
         if (!response.ok) {
           throw new Error("Failed to fetch games");
         }
-        const jsonData = (await response.json());
+        const jsonData = await response.json();
         setGames(jsonData);
       } catch (err) {
         console.error("Error while fetching:", err);

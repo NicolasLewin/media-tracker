@@ -1,14 +1,27 @@
 "use client"
 
+import { Game } from "@/types";
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast';
+interface DetailedGame extends Game {
+  summary?: string;
+  rating?: number;
+  genres?: Array<{
+    id: number;
+    name: string;
+  }>;
+  platforms?: Array<{
+    id: number;
+    name: string;
+  }>;
+}
 
 export default function GameDetailsPage({ params }: {params: { gameId: string}}) {
-    const [game, setGame] = useState([]);
+    const [game, setGame] = useState<DetailedGame[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState("null");
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const gameId = params.gameId;
   
@@ -33,9 +46,12 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
         setIsLoading(false);
       }
     };
-    
 
     const addToProfile = async () => {
+      if (!game[0]?.id) {
+        return;
+      }
+
       try {
         const response = await fetch('/api/user/add-game', {
           method: 'POST',
@@ -57,18 +73,20 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
         toast.success('Game added to your profile!');
       } catch (error) {
         console.error('Error adding game to profile:', error);
-        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
-          toast.error('Please log in to add games to your profile.');
-        } else if (error.message === 'The game is already in your profile') {
-          toast.success('This game is already in your profile.', {
-            icon: '🔔',
-            style: {
-              background: '#3498db',
-              color: '#fff',
-            },
-          });
-        } else {
-          toast.error(`Failed to add game to your profile: ${error.message}`);
+        if (error instanceof Error) {
+          if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+            toast.error('Please log in to add games to your profile.');
+          } else if (error.message === 'The game is already in your profile') {
+            toast.success('This game is already in your profile.', {
+              icon: '🔔',
+              style: {
+                background: '#3498db',
+                color: '#fff',
+              },
+            });
+          } else {
+            toast.error(`Failed to add game to your profile: ${error.message}`);
+          }
         }
       }
     };

@@ -1,14 +1,23 @@
 "use client"
 
+import { Movie } from "@/types";
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast';
 
+interface DetailedMovie extends Movie {
+  Plot?: string;
+  Director?: string;
+  Actors?: string;
+  Genre?: string;
+  imdbRating?: string;
+}
+
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
-  const [movie, setMovie] = useState([]);
+  const [movie, setMovie] = useState<DetailedMovie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const movieId = params.movieId;
 
@@ -35,6 +44,10 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
   };
 
   const addToProfile = async () => {
+    if (!movie?.imdbID) {
+      return;
+    }
+
     try {
       const response = await fetch('/api/user/add-movie', {
         method: 'POST',
@@ -42,7 +55,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          movieId: String(movie.imdbID),
+          movieId: movie.imdbID,
         }),
         credentials: 'include',
       });
@@ -56,18 +69,20 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
       toast.success('Movie added to your profile!');
     } catch (error) {
       console.error('Error adding movie to profile:', error);
-      if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
-        toast.error('Please log in to add movies to your profile.');
-      } else if (error.message === 'The movie is already in your profile') {
-        toast.success('This movie is already in your profile.', {
-          icon: '🔔',
-          style: {
-            background: '#3498db',
-            color: '#fff',
-          },
-        });
-      } else {
-        toast.error(`Failed to add movie to your profile: ${error.message}`);
+      if (error instanceof Error) {
+        if (error.message === 'Unauthorized' || error.message === 'Invalid token') {
+          toast.error('Please log in to add movies to your profile.');
+        } else if (error.message === 'The movie is already in your profile') {
+          toast.success('This movie is already in your profile.', {
+            icon: '🔔',
+            style: {
+              background: '#3498db',
+              color: '#fff',
+            },
+          });
+        } else {
+          toast.error(`Failed to add movie to your profile: ${error.message}`);
+        }
       }
     }
   };

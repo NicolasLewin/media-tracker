@@ -1,14 +1,15 @@
 "use client"
 
+import { Movie } from "@/types";
 import { MovieCard } from "@/components/MovieCard";
 import { Spacing } from "@/components/Spacing";
 import { useEffect, useState } from "react";
 
 export default function Movies() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {

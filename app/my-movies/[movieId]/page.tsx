@@ -1,15 +1,24 @@
 "use client"
 
+import { Movie } from "@/types";
 import { ReviewModal } from '@/components/ReviewModal';
 import { Spacing } from "@/components/Spacing";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from 'react-hot-toast';
 
+interface DetailedMovie extends Movie {
+  Plot?: string;
+  Director?: string;
+  Actors?: string;
+  Genre?: string;
+  imdbRating?: string;
+}
+
 export default function MovieDetailsPage({ params }: { params: { movieId: string } }) {
-  const [movie, setMovie] = useState([]);
+  const [movie, setMovie] = useState<DetailedMovie | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const movieId = params.movieId;
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -55,6 +64,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
   };
 
   const handleReviewSubmit = async (review: string) => {
+    if (!movie?.imdbID) return;
     try {
       const response = await fetch('/api/user/review-movie', {
         method: 'POST',
@@ -82,6 +92,7 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
   };
 
   const removeFromProfile = async () => {
+    if (!movie?.imdbID) return;
     try {
       const response = await fetch('/api/user/remove-movie', {
         method: 'POST',
