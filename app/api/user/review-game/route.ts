@@ -55,6 +55,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
+    if (!gameId) {
+      return NextResponse.json({ message: 'Game ID is required' }, { status: 400 })
+    }
+
     let decodedToken;
     try {
       decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number }
