@@ -4,7 +4,6 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { headers } from 'next/headers'
 import { Header } from "@/components/Header";
-import { ParticlesProvider } from "./providers/ParticlesProvider";
 import { UserProvider } from "@/contexts/UserContext";
 
 const inter = Inter({ subsets: ["latin"] });
