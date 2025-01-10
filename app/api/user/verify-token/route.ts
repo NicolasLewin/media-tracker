@@ -8,8 +8,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ isLoggedIn: false }, { status: 401 })
   }
 
+  const jwtSecret = process.env.JWT_SECRET
+  if (!jwtSecret) {
+    return NextResponse.json({ message: 'Server configuration error' }, { status: 500 })
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const decoded = jwt.verify(token, jwtSecret)
     return NextResponse.json({ isLoggedIn: true, user: decoded }, { status: 200 })
   } catch (error) {
     return NextResponse.json({ isLoggedIn: false }, { status: 401 })
