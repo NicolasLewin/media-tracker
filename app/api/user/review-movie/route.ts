@@ -1,8 +1,8 @@
 import prisma from '@/prisma'
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
 import jwt from 'jsonwebtoken'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     let decodedToken;
     try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET) as { userId: number }
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number }
     } catch (error) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
     }
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('token')?.value
     const { searchParams } = new URL(request.url)
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
 
     let decodedToken;
     try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET) as { userId: number }
+      decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number }
     } catch (error) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 })
     }
