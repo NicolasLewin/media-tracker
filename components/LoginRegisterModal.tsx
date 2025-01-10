@@ -1,6 +1,6 @@
 import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import toast from 'react-hot-toast';
 
 type LoginRegisterModalProps = {
@@ -37,8 +37,7 @@ export const LoginRegisterModal = ({ onClose }: LoginRegisterModalProps) => {
     }
   };
 
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
 
@@ -69,13 +68,10 @@ export const LoginRegisterModal = ({ onClose }: LoginRegisterModalProps) => {
         setConfirmPassword('');
         if (isLogin) {
           setUser(data.user);
-
           router.refresh();
-
           setMessage(`Hello, ${data.user.username}!`);
           onClose();
           toast.success("Successfully logged in!");
-
         } else {
           setMessage('Registration successful! Please log in.');
           setIsLogin(true);
