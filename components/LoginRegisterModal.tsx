@@ -3,7 +3,11 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export const LoginRegisterModal = ({ onClose } : {onClose: boolean}) => {
+type LoginRegisterModalProps = {
+  onClose: () => void;
+}
+
+export const LoginRegisterModal = ({ onClose }: LoginRegisterModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
