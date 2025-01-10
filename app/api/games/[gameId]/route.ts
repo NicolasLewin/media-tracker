@@ -7,19 +7,26 @@ export async function GET(request: Request) {
   const gameId = searchParams.get('gameId');
 
   if (!gameId) {
-    return NextResponse.json({ message: 'GameId parameter is required' }, { status: 400 });
+    return NextResponse.json({ message: 'Game ID parameter is required' }, { status: 400 });
   }
-  
+
+  const clientId = process.env.CLIENT_ID_GAMES;
+  const authorization = process.env.AUTHORIZATION_GAMES;
+
+  if (!clientId || !authorization) {
+    return NextResponse.json({ error: 'Missing API configuration' }, { status: 500 });
+  }
+
   try {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Client-ID': process.env.CLIENT_ID_GAMES,
-        'Authorization': process.env.AUTHORIZATION_GAMES,
-      },
-      body: `fields name, summary, rating, genres.name, platforms.name, cover.url, release_dates.date;
-             where id = ${gameId};`
+        'Client-ID': clientId,
+        'Authorization': authorization,
+        'Content-Type': 'text/plain'
+      } as HeadersInit,
+      body: `fields name,summary,cover.*,rating,genres.*,platforms.*; where id = ${gameId};`
     });
 
     if (!res.ok) {
@@ -27,11 +34,10 @@ export async function GET(request: Request) {
     }
 
     const data = await res.json();
-
-
     return NextResponse.json(data);
+    
   } catch (error) {
-      console.error('Error while fetching game details:', error);
-      return NextResponse.json({ error: 'Error fetching game details' }, { status: 500 });
+    console.error('Error fetching game data:', error);
+    return NextResponse.json({ error: 'Error fetching game data' }, { status: 500 });
   }
 }
