@@ -96,6 +96,8 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
     };
 
     const removeFromProfile = async () => {
+      if (!game[0]?.id) return;
+    
       try {
         const response = await fetch('/api/user/remove-game', {
           method: 'POST',
@@ -107,17 +109,21 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
           }),
           credentials: 'include',
         });
-
+    
         const data = await response.json();
-
+    
         if (!response.ok) {
           throw new Error(data.message || 'Failed to remove game from profile');
         }
-
+    
         toast.success('Game removed from your profile!');
       } catch (error) {
         console.error('Error removing game from profile:', error);
-        toast.error(`Failed to remove game from your profile: ${error.message}`);
+        if (error instanceof Error) {
+          toast.error(`Failed to remove game from your profile: ${error.message}`);
+        } else {
+          toast.error('Failed to remove game from your profile');
+        }
       }
     };
 

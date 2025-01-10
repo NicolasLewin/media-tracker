@@ -114,7 +114,11 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
       toast.success('Movie removed from your profile!');
     } catch (error) {
       console.error('Error removing movie from profile:', error);
-      toast.error(`Failed to remove movie from your profile: ${error.message}`);
+      if (error instanceof Error) {
+        toast.error(`Failed to remove movie from your profile: ${error.message}`);
+      } else {
+        toast.error('Failed to remove movie from your profile');
+      }
     }
   };
 
