@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: Request, { params }: { params: { gameId: string } }) {
   const url = "https://api.igdb.com/v4/games";
   
-  const { searchParams } = new URL(request.url);
-  const gameId = searchParams.get('gameId');
-
+  const gameId = params.gameId || new URL(request.url).searchParams.get('gameId');
+  console.log('GameId from params:', params.gameId);
+  console.log('Full request URL:', request.url);
+  
   if (!gameId) {
     return NextResponse.json({ message: 'Game ID parameter is required' }, { status: 400 });
   }

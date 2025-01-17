@@ -33,7 +33,7 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
   
     const fetchGameDetails = async (gameId: string) => {
       try {
-        const response = await fetch(`/api/games/${gameId}?gameId=${gameId}`);
+        const response = await fetch(`/api/games/${gameId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch game details');
         }
