@@ -4,8 +4,6 @@ export async function GET(request: Request, { params }: { params: { gameId: stri
   const url = "https://api.igdb.com/v4/games";
   
   const gameId = params.gameId || new URL(request.url).searchParams.get('gameId');
-  console.log('GameId from params:', params.gameId);
-  console.log('Full request URL:', request.url);
   
   if (!gameId) {
     return NextResponse.json({ message: 'Game ID parameter is required' }, { status: 400 });
