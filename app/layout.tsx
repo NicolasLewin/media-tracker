@@ -22,7 +22,7 @@ async function getUser() {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/api/user/verify-token', {
+    const response = await fetch('/api/user/verify-token', {
       headers: { Cookie: token },
     })
     const data = await response.json()
