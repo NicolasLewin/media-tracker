@@ -4,13 +4,14 @@ import { useState } from "react";
 import { LoginRegisterModal } from "./LoginRegisterModal";
 import toast from "react-hot-toast";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useUser } from "@/contexts/UserContext";
 
 export const Header = () => {
   const [isLoginRegisterModalOpen, setIsLoginRegisterModalOpen] = useState(false);
   const { user, setUser } = useUser();
   const router = useRouter();
+  const pathname = usePathname();
 
   const toggleLoginRegisterModal = () => {
       setIsLoginRegisterModalOpen(!isLoginRegisterModalOpen);
@@ -31,6 +32,13 @@ export const Header = () => {
       console.error('Logout error:', error);
       toast.error('Error during logout');
     }
+  };
+
+  const getLinkClassName = (path: string) => {
+    const isActive = pathname === path;
+    return `block py-2 px-3 ${isActive 
+      ? 'text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500' 
+      : 'text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700'}`;
   };
 
   return (  
@@ -58,22 +66,22 @@ export const Header = () => {
           <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
-                <Link href="/" className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500" aria-current="page">Home</Link>
+                <Link href="/" className={getLinkClassName("/")} aria-current="page">Home</Link>
               </li>
               <li>
-                <Link href="/games" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Games</Link>
+                <Link href="/games" className={getLinkClassName("/games")}>Games</Link>
               </li>
               <li>
-                <Link href="/movies" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Movies</Link>
+                <Link href="/movies" className={getLinkClassName("/movies")}>Movies</Link>
               </li>
               {user && (
                 <li>
-                  <Link href="/my-games" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">My Games</Link>
+                  <Link href="/my-games" className={getLinkClassName("/my-games")}>My Games</Link>
                 </li>
               )}
               {user && (
                 <li>
-                  <Link href="/my-movies" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">My Movies</Link>
+                  <Link href="/my-movies" className={getLinkClassName("/my-movies")}>My Movies</Link>
                 </li>
               )}
             </ul>
