@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface UserContextType {
   user: any;
@@ -11,6 +11,31 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children, initialUser }: { children: ReactNode, initialUser: any }) => {
   const [user, setUser] = useState(initialUser);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await fetch('/api/user/verify-token', {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (data.isLoggedIn) {
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Error checking login status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
