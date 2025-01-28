@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
 export const ReviewModal = ({ 
@@ -15,6 +15,10 @@ export const ReviewModal = ({
   title: string;
 }) => {
   const [review, setReview] = useState(initialReview);
+
+  useEffect(() => {
+    setReview(initialReview);
+  }, [initialReview, isOpen]);
 
   if (!isOpen) return null;
 

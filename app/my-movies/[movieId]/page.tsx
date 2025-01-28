@@ -26,25 +26,27 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
 
   useEffect(() => {
     if (movieId) {
-      fetchMovieDetails(movieId);
-    }
-
-    const fetchReview = async () => {
-      try {
-        const response = await fetch(`/api/user/review-movie?movieId=${movieId}`, {
-          credentials: 'include'
-        });
-        if (response.ok) {
+      const fetchMovieAndReview = async () => {
+        try {
+          await fetchMovieDetails(movieId);
+          const response = await fetch(`/api/user/review-movie?movieId=${movieId}`, {
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch review');
+          }
+          
           const data = await response.json();
-          setCurrentReview(data.review);
+          setCurrentReview(data.review || '');
+        } catch (error) {
+          console.error('Error:', error);
+          toast.error('Error fetching review');
         }
-      } catch (error) {
-        console.error('Error fetching review:', error);
-      }
-    };
-    
-    fetchReview();
+      };
 
+      fetchMovieAndReview();
+    }
   }, [movieId]);
 
   const fetchMovieDetails = async (movieId: string) => {
@@ -203,14 +205,14 @@ export default function MovieDetailsPage({ params }: { params: { movieId: string
                           {currentReview ? 'Edit Review' : 'Write Review'}
                         </button>
                       </div>
-                        <ReviewModal
-                          isOpen={isReviewModalOpen}
-                          onClose={() => setIsReviewModalOpen(false)}
-                          onSubmit={handleReviewSubmit}
-                          initialReview={currentReview}
-                          title={movie.Title}
-                        />
-                      </div>
+                      <ReviewModal
+                        isOpen={isReviewModalOpen}
+                        onClose={() => setIsReviewModalOpen(false)}
+                        onSubmit={handleReviewSubmit}
+                        initialReview={currentReview}
+                        title={movie.Title}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

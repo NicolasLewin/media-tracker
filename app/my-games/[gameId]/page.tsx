@@ -31,25 +31,27 @@ export default function GameDetailsPage({ params }: {params: { gameId: string}})
 
     useEffect(() => {
       if (gameId) {
-        fetchGameDetails(gameId);
-      }
-
-      const fetchReview = async () => {
-        try {
-          const response = await fetch(`/api/user/review-game?gameId=${gameId}`, {
-            credentials: 'include'
-          });
-          if (response.ok) {
+        const fetchGameAndReview = async () => {
+          try {
+            await fetchGameDetails(gameId);
+            const response = await fetch(`/api/user/review-game?gameId=${gameId}`, {
+              credentials: 'include'
+            });
+            
+            if (!response.ok) {
+              throw new Error('Failed to fetch review');
+            }
+            
             const data = await response.json();
-            setCurrentReview(data.review);
+            setCurrentReview(data.review || '');
+          } catch (error) {
+            console.error('Error:', error);
+            toast.error('Error fetching review');
           }
-        } catch (error) {
-          console.error('Error fetching review:', error);
-        }
-      };
-      
-      fetchReview();
-
+        };
+    
+        fetchGameAndReview();
+      }
     }, [gameId]);
   
     const fetchGameDetails = async (gameId: string) => {
